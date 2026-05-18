@@ -40,7 +40,7 @@ new class extends Component
 
         Flux::toast(variant: 'success', text: 'Entry updated.');
 
-        $this->redirectRoute('entries.show', ['entry' => $this->entryModel], navigate: true);
+        $this->redirectRoute('entries.index', navigate: true);
     }
 
     public function delete(): void
@@ -77,21 +77,27 @@ new class extends Component
             <flux:error name="type" />
         </flux:field>
 
-        <flux:button variant="primary" type="submit" data-test="entry-save-button">
-            Save
-        </flux:button>
+        <div class="flex">
+            <flux:spacer />
+            <flux:button variant="primary" type="submit" class="max-sm:w-full" data-test="create-entry-submit">
+                Save
+            </flux:button>
+        </div>
     </form>
 
-    <flux:separator class="mt-8" />
+    <div class="max-w-xl">
+        <flux:separator class="my-8" />
 
-    <div class="mt-4">
-        <flux:button
-            variant="danger"
-            wire:click="delete"
-            wire:confirm="Are you sure you want to delete this entry?"
-            data-test="entry-delete-button"
-        >
-            Delete entry
-        </flux:button>
+        <div class="flex">
+            <flux:spacer />
+            <flux:button
+                class="text-red-700! dark:text-red-300! max-sm:w-full"
+                wire:click="delete"
+                wire:confirm="Are you sure you want to delete this entry?"
+                data-test="entry-delete-button"
+            >
+                Delete entry
+            </flux:button>
+        </div>
     </div>
 </section>

@@ -40,7 +40,7 @@ new class extends Component
 }; ?>
 
 <section class="w-full">
-    <div class="flex items-center justify-between gap-4">
+    <div class="flex flex-wrap items-end justify-between gap-4">
         <flux:heading size="xl" level="1">{{ Str::limit($entryModel->content, 60) }}</flux:heading>
         <div class="flex items-center gap-2">
             @if ($entryModel->type->value === 'task')

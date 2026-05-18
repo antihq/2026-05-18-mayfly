@@ -336,7 +336,7 @@ test('edit redirects to entries show after update', function () {
     Livewire::test('pages::entries.edit', ['entry' => $entry->id])
         ->set('content', 'Updated')
         ->call('update')
-        ->assertRedirect(route('entries.show', $entry));
+        ->assertRedirect(route('entries.index'));
 });
 
 test('edit redirects to entries index after delete', function () {

@@ -60,8 +60,11 @@ new #[Title('New Entry')] class extends Component
             <flux:error name="type" />
         </flux:field>
 
-        <flux:button variant="primary" type="submit" data-test="create-entry-submit">
-            Create entry
-        </flux:button>
+        <div class="flex">
+            <flux:spacer />
+            <flux:button variant="primary" type="submit" class="max-sm:w-full" data-test="create-entry-submit">
+                Create entry
+            </flux:button>
+        </div>
     </form>
 </section>
