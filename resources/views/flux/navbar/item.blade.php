@@ -25,7 +25,7 @@ $square ??= $slot->isEmpty();
 $iconClasses = Flux::classes($square ? 'size-6' : 'size-5');
 
 $classes = Flux::classes()
-    ->add('px-3 h-8 flex items-center rounded-lg')
+    ->add('p-2 flex items-center rounded-lg lowercase')
     ->add('relative') // This is here for the "active" bar at the bottom to be positioned correctly...
     ->add($square ? '' : 'px-2.5!')
     ->add('text-zinc-950 dark:text-white ')
@@ -39,11 +39,11 @@ $classes = Flux::classes()
         true => [
             'hover:text-zinc-950 dark:hover:text-white',
             'hover:bg-zinc-950/5 dark:hover:bg-white/5',
-            'data-current:after:bg-(--color-accent)',
+            // 'data-current:after:bg-(--color-accent)',
         ],
         false => [
-            'data-current:text-zinc-950 dark:data-current:text-white hover:bg-zinc-950/5 dark:hover:bg-white/5',
-            'data-current:after:bg-zinc-950 dark:data-current:after:bg-white',
+            // 'data-current:text-zinc-950 dark:data-current:text-white hover:bg-zinc-950/5 dark:hover:bg-white/5',
+            // 'data-current:after:bg-zinc-950 dark:data-current:after:bg-white',
         ],
     })
     ;

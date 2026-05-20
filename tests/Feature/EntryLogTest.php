@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\EntryStatus;
 use App\Enums\EntryType;
 use App\Models\Entry;
 use App\Models\User;
@@ -22,16 +23,14 @@ test('dashboard redirects to entries index', function () {
         ->assertRedirect(route('entries.index'));
 });
 
-test('entries index shows empty table when no entries exist', function () {
+test('entries index shows empty list when no entries exist', function () {
     $this->actingAs($this->user);
 
     Livewire::test('pages::entries.index')
-        ->assertSee('Content')
-        ->assertSee('Type')
-        ->assertSee('Expires');
+        ->assertSee('Recent entries');
 });
 
-test('entries index shows active entries in table', function () {
+test('entries index shows active entries in list', function () {
     $this->actingAs($this->user);
     Entry::factory()->create([
         'team_id' => $this->team->id,
@@ -43,16 +42,48 @@ test('entries index shows active entries in table', function () {
         ->assertSee('I am active');
 });
 
-test('entries index does not show expired entries', function () {
+test('entries index does not show expired entries in main list', function () {
     $this->actingAs($this->user);
-    Entry::factory()->expired()->create([
+    $entry = Entry::factory()->expired()->create([
         'team_id' => $this->team->id,
         'user_id' => $this->user->id,
         'content' => 'I am expired',
     ]);
 
+    $component = Livewire::test('pages::entries.index');
+
+    $entryIds = $component->get('entries')->pluck('id')->toArray();
+
+    expect($entryIds)->not->toContain($entry->id);
+});
+
+test('entries index shows recently expired entries in sidebar', function () {
+    $this->actingAs($this->user);
+    Entry::factory()->create([
+        'team_id' => $this->team->id,
+        'user_id' => $this->user->id,
+        'content' => 'I am expired',
+        'expires_at' => now()->subHours(2),
+    ]);
+
     Livewire::test('pages::entries.index')
-        ->assertDontSee('I am expired');
+        ->assertSee('I am expired')
+        ->assertSee('Recently expired');
+});
+
+test('entries index does not show entries expired more than 24 hours ago in sidebar', function () {
+    $this->actingAs($this->user);
+    Entry::factory()->create([
+        'team_id' => $this->team->id,
+        'user_id' => $this->user->id,
+        'content' => 'Old expired',
+        'expires_at' => now()->subHours(25),
+    ]);
+
+    $component = Livewire::test('pages::entries.index');
+
+    $expiredIds = $component->get('recentlyExpired')->pluck('id')->toArray();
+    expect($expiredIds)->toBeEmpty();
 });
 
 test('entries index does not show entries from other teams', function () {
@@ -80,8 +111,7 @@ test('entries can be created as tasks', function () {
 
     Livewire::test('pages::entries.create')
         ->set('content', 'Buy groceries')
-        ->set('type', 'task')
-        ->call('create')
+        ->call('create', 'task')
         ->assertHasNoErrors();
 
     $this->assertDatabaseHas('entries', [
@@ -89,7 +119,7 @@ test('entries can be created as tasks', function () {
         'user_id' => $this->user->id,
         'type' => EntryType::Task->value,
         'content' => 'Buy groceries',
-        'is_completed' => false,
+        'status' => EntryStatus::Active,
     ]);
 });
 
@@ -98,8 +128,7 @@ test('entries can be created as notes', function () {
 
     Livewire::test('pages::entries.create')
         ->set('content', 'Cool idea for later')
-        ->set('type', 'note')
-        ->call('create')
+        ->call('create', 'note')
         ->assertHasNoErrors();
 
     $this->assertDatabaseHas('entries', [
@@ -114,7 +143,7 @@ test('creating an entry sets expires_at to 72 hours from now', function () {
 
     Livewire::test('pages::entries.create')
         ->set('content', 'Test entry')
-        ->call('create');
+        ->call('create', 'task');
 
     $entry = Entry::first();
 
@@ -127,7 +156,7 @@ test('content is required when creating', function () {
 
     Livewire::test('pages::entries.create')
         ->set('content', '')
-        ->call('create')
+        ->call('create', 'task')
         ->assertHasErrors(['content' => 'required']);
 });
 
@@ -136,7 +165,7 @@ test('content has a max length of 1000 characters when creating', function () {
 
     Livewire::test('pages::entries.create')
         ->set('content', str_repeat('a', 1001))
-        ->call('create')
+        ->call('create', 'task')
         ->assertHasErrors(['content' => 'max']);
 });
 
@@ -175,7 +204,7 @@ test('entry can be toggled complete from show page', function () {
     Livewire::test('pages::entries.show', ['entry' => $entry->id])
         ->call('toggleComplete');
 
-    expect($entry->fresh()->is_completed)->toBeTrue();
+    expect($entry->fresh()->status)->toEqual(EntryStatus::Completed);
 });
 
 test('edit page renders for team entry', function () {
@@ -248,7 +277,7 @@ test('entries can be deleted from edit page', function () {
     $this->assertDatabaseMissing('entries', ['id' => $entry->id]);
 });
 
-test('entries index default sort is by expires_at descending', function () {
+test('entries index orders by expires_at descending', function () {
     $this->actingAs($this->user);
     $first = Entry::factory()->create([
         'team_id' => $this->team->id,
@@ -269,36 +298,12 @@ test('entries index default sort is by expires_at descending', function () {
     expect($entryIds)->toEqual([$first->id, $second->id]);
 });
 
-test('sortBy toggles direction when same field clicked', function () {
-    $this->actingAs($this->user);
-
-    Livewire::test('pages::entries.index')
-        ->call('sortBy', 'content')
-        ->assertSet('sortField', 'content')
-        ->assertSet('sortDirection', 'asc')
-        ->call('sortBy', 'content')
-        ->assertSet('sortField', 'content')
-        ->assertSet('sortDirection', 'desc');
-});
-
-test('sortBy resets to asc when new field clicked', function () {
-    $this->actingAs($this->user);
-
-    Livewire::test('pages::entries.index')
-        ->call('sortBy', 'content')
-        ->assertSet('sortField', 'content')
-        ->assertSet('sortDirection', 'asc')
-        ->call('sortBy', 'expires_at')
-        ->assertSet('sortField', 'expires_at')
-        ->assertSet('sortDirection', 'asc');
-});
-
 test('create redirects to entries index', function () {
     $this->actingAs($this->user);
 
     Livewire::test('pages::entries.create')
         ->set('content', 'Test entry')
-        ->call('create')
+        ->call('create', 'task')
         ->assertRedirect(route('entries.index'));
 });
 
@@ -362,4 +367,147 @@ test('editing content has a max length of 1000 characters', function () {
         ->set('content', str_repeat('a', 1001))
         ->call('update')
         ->assertHasErrors(['content' => 'max']);
+});
+
+test('task can be completed from index page', function () {
+    $this->actingAs($this->user);
+    $entry = Entry::factory()->create([
+        'team_id' => $this->team->id,
+        'user_id' => $this->user->id,
+        'type' => EntryType::Task,
+    ]);
+
+    Livewire::test('pages::entries.index')
+        ->call('complete', $entry->id);
+
+    expect($entry->fresh()->status)->toEqual(EntryStatus::Completed);
+});
+
+test('task can be cancelled from index page', function () {
+    $this->actingAs($this->user);
+    $entry = Entry::factory()->create([
+        'team_id' => $this->team->id,
+        'user_id' => $this->user->id,
+        'type' => EntryType::Task,
+    ]);
+
+    Livewire::test('pages::entries.index')
+        ->call('cancel', $entry->id);
+
+    expect($entry->fresh()->status)->toEqual(EntryStatus::Cancelled);
+});
+
+test('entry can be migrated from index page', function () {
+    $this->actingAs($this->user);
+    $entry = Entry::factory()->create([
+        'team_id' => $this->team->id,
+        'user_id' => $this->user->id,
+    ]);
+
+    Livewire::test('pages::entries.index')
+        ->call('migrate', $entry->id);
+
+    expect($entry->fresh()->status)->toEqual(EntryStatus::Migrated);
+});
+
+test('inline entry can be created as task from index page', function () {
+    $this->actingAs($this->user);
+
+    Livewire::test('pages::entries.index')
+        ->set('newContent', 'Buy groceries')
+        ->call('create', 'task')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseHas('entries', [
+        'team_id' => $this->team->id,
+        'user_id' => $this->user->id,
+        'type' => EntryType::Task->value,
+        'content' => 'Buy groceries',
+        'status' => EntryStatus::Active,
+    ]);
+});
+
+test('inline entry can be created as note from index page', function () {
+    $this->actingAs($this->user);
+
+    Livewire::test('pages::entries.index')
+        ->set('newContent', 'Cool idea')
+        ->call('create', 'note')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseHas('entries', [
+        'team_id' => $this->team->id,
+        'type' => EntryType::Note->value,
+        'content' => 'Cool idea',
+    ]);
+});
+
+test('inline entry content is required on index page', function () {
+    $this->actingAs($this->user);
+
+    Livewire::test('pages::entries.index')
+        ->set('newContent', '')
+        ->call('create', 'task')
+        ->assertHasErrors(['newContent' => 'required']);
+});
+
+test('inline entry content has max length of 1000 characters on index page', function () {
+    $this->actingAs($this->user);
+
+    Livewire::test('pages::entries.index')
+        ->set('newContent', str_repeat('a', 1001))
+        ->call('create', 'task')
+        ->assertHasErrors(['newContent' => 'max']);
+});
+
+test('completing entry from another team throws not found on index page', function () {
+    $otherUser = User::factory()->create();
+    $entry = Entry::factory()->create([
+        'team_id' => $otherUser->currentTeam->id,
+        'user_id' => $otherUser->id,
+    ]);
+
+    $this->actingAs($this->user);
+
+    Livewire::test('pages::entries.index')
+        ->call('complete', $entry->id);
+})->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
+test('cancelling entry from another team throws not found on index page', function () {
+    $otherUser = User::factory()->create();
+    $entry = Entry::factory()->create([
+        'team_id' => $otherUser->currentTeam->id,
+        'user_id' => $otherUser->id,
+    ]);
+
+    $this->actingAs($this->user);
+
+    Livewire::test('pages::entries.index')
+        ->call('cancel', $entry->id);
+})->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
+test('migrating entry from another team throws not found on index page', function () {
+    $otherUser = User::factory()->create();
+    $entry = Entry::factory()->create([
+        'team_id' => $otherUser->currentTeam->id,
+        'user_id' => $otherUser->id,
+    ]);
+
+    $this->actingAs($this->user);
+
+    Livewire::test('pages::entries.index')
+        ->call('migrate', $entry->id);
+})->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
+test('completed task can be reopened from show page', function () {
+    $this->actingAs($this->user);
+    $entry = Entry::factory()->completed()->create([
+        'team_id' => $this->team->id,
+        'user_id' => $this->user->id,
+    ]);
+
+    Livewire::test('pages::entries.show', ['entry' => $entry->id])
+        ->call('toggleComplete');
+
+    expect($entry->fresh()->status)->toEqual(EntryStatus::Active);
 });

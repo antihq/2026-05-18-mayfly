@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\EntryStatus;
 use App\Models\Entry;
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
@@ -121,14 +122,14 @@ new #[Title('Archive')] class extends Component
 
                                     <flux:table.cell class="relative">
                                         <x-table-row-link :href="route('entries.show', $entry)" wire:navigate />
-                                        <span class="text-zinc-500 {{ $entry->is_completed ? 'line-through' : '' }}">
+                                        <span class="text-zinc-500 dark:text-zinc-400 {{ $entry->status === EntryStatus::Cancelled ? 'line-through' : '' }}">
                                             {{ Str::limit($entry->content, 60) }}
                                         </span>
                                     </flux:table.cell>
 
                                     <flux:table.cell class="relative" align="end">
                                         <x-table-row-link :href="route('entries.show', $entry)" wire:navigate />
-                                        <span class="text-zinc-500">
+                                        <span class="text-zinc-500 dark:text-zinc-400">
                                             {{ $entry->expires_at->format('M j, g:i a') }}
                                         </span>
                                     </flux:table.cell>
@@ -178,14 +179,14 @@ new #[Title('Archive')] class extends Component
 
                             <flux:table.cell class="relative">
                                 <x-table-row-link :href="route('entries.show', $entry)" wire:navigate />
-                                <span class="text-zinc-500 {{ $entry->is_completed ? 'line-through' : '' }}">
+                                <span class="text-zinc-500 dark:text-zinc-400 {{ $entry->status === EntryStatus::Cancelled ? 'line-through' : '' }}">
                                     {{ Str::limit($entry->content, 60) }}
                                 </span>
                             </flux:table.cell>
 
                             <flux:table.cell class="relative" align="end">
                                 <x-table-row-link :href="route('entries.show', $entry)" wire:navigate />
-                                <span class="text-zinc-500">
+                                <span class="text-zinc-500 dark:text-zinc-400">
                                     {{ $entry->expires_at->format('M j, g:i a') }}
                                 </span>
                             </flux:table.cell>

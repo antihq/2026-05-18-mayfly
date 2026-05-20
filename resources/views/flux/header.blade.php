@@ -7,7 +7,7 @@
 
 @php
 $classes = Flux::classes('[grid-area:header]')
-    ->add('z-10 min-h-14')
+    ->add('z-10')
     ->add($container ? '' : 'flex items-center px-6 lg:px-10')
     ;
 

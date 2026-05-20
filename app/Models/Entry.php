@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EntryStatus;
 use App\Enums\EntryType;
 use Database\Factories\EntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['team_id', 'user_id', 'type', 'content', 'is_completed', 'expires_at'])]
+#[Fillable(['team_id', 'user_id', 'type', 'content', 'status', 'expires_at'])]
 class Entry extends Model
 {
     /** @use HasFactory<EntryFactory> */
@@ -19,7 +20,7 @@ class Entry extends Model
     {
         return [
             'type' => EntryType::class,
-            'is_completed' => 'boolean',
+            'status' => EntryStatus::class,
             'expires_at' => 'datetime',
         ];
     }
@@ -55,8 +56,15 @@ class Entry extends Model
             return 'Expired';
         }
 
-        $hours = (int) now()->diffInHours($this->expires_at, absolute: true);
+        $diff = now()->diff($this->expires_at);
+        $totalMinutes = ($diff->d * 24 * 60) + ($diff->h * 60) + $diff->i;
 
-        return $hours.'h left';
+        if ($totalMinutes >= 60) {
+            $hours = (int) floor($totalMinutes / 60);
+
+            return $hours.'h left';
+        }
+
+        return $totalMinutes.'m left';
     }
 }

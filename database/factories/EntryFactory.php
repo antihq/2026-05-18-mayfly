@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\EntryStatus;
 use App\Enums\EntryType;
 use App\Models\Entry;
 use App\Models\Team;
@@ -20,7 +21,7 @@ class EntryFactory extends Factory
             'user_id' => User::factory(),
             'type' => EntryType::Task,
             'content' => fake()->sentence(),
-            'is_completed' => false,
+            'status' => EntryStatus::Active,
             'expires_at' => now()->addHours(72),
         ];
     }
@@ -42,7 +43,21 @@ class EntryFactory extends Factory
     public function completed(): static
     {
         return $this->state(fn (array $attributes) => [
-            'is_completed' => true,
+            'status' => EntryStatus::Completed,
+        ]);
+    }
+
+    public function cancelled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => EntryStatus::Cancelled,
+        ]);
+    }
+
+    public function migrated(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => EntryStatus::Migrated,
         ]);
     }
 

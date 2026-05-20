@@ -1,8 +1,8 @@
 <?php
 
+use App\Enums\EntryStatus;
 use App\Models\Entry;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 new class extends Component
@@ -18,16 +18,12 @@ new class extends Component
         $this->entryModel = $entry;
     }
 
-    #[Computed]
-    public function isActive(): bool
-    {
-        return ! $this->entryModel->isExpired();
-    }
-
     public function toggleComplete(): void
     {
         $this->entryModel->update([
-            'is_completed' => ! $this->entryModel->is_completed,
+            'status' => $this->entryModel->status === EntryStatus::Completed
+                ? EntryStatus::Active
+                : EntryStatus::Completed,
         ]);
 
         $this->redirectRoute('entries.index', navigate: true);
@@ -48,7 +44,7 @@ new class extends Component
                     wire:click="toggleComplete"
                     data-test="toggle-complete-button"
                 >
-                    {{ $entryModel->is_completed ? 'Reopen' : 'Complete' }}
+                    {{ $entryModel->status === EntryStatus::Completed ? 'Reopen' : 'Complete' }}
                 </flux:button>
             @endif
             <flux:button :href="route('entries.edit', $entryModel)" wire:navigate data-test="entry-edit-button">
@@ -65,13 +61,7 @@ new class extends Component
 
         <x-description.term>Status</x-description.term>
         <x-description.details>
-            @if ($entryModel->is_completed)
-                <flux:badge color="green" size="sm">Completed</flux:badge>
-            @elseif ($this->isActive)
-                <flux:badge color="blue" size="sm">Active</flux:badge>
-            @else
-                <flux:badge color="red" size="sm">Expired</flux:badge>
-            @endif
+            <flux:badge color="zinc" size="sm">{{ $entryModel->status->label() }}</flux:badge>
         </x-description.details>
 
         <x-description.term>Content</x-description.term>
@@ -83,7 +73,7 @@ new class extends Component
         <x-description.term>Expires</x-description.term>
         <x-description.details>
             {{ $entryModel->expires_at->format('M j, Y \a\t g:i a') }}
-            <span class="ml-2 text-zinc-500">
+            <span class="ml-2 text-zinc-500 dark:text-zinc-400">
                 ({{ $entryModel->timeRemaining() }})
             </span>
         </x-description.details>

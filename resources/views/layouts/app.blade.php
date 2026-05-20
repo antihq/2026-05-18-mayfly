@@ -4,70 +4,22 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-900 antialiased text-zinc-950 dark:text-white">
-        <flux:sidebar sticky collapsible class="bg-white lg:bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-950/5 dark:border-white/5">
-            <flux:sidebar.header>
-                <div class="min-w-0 flex-1">
-                    <livewire:team-switcher />
+        <header class="px-6 lg:px-10 [grid-area:header] max-w-6xl mx-auto w-full">
+            <nav class="flex flex-wrap items-center gap-x-4 py-6 lg:py-10 gap-y-2 border-b border-zinc-950/5 dark:border-white/10">
+                <div><span class="text-base/6 sm:text-sm/6 text-zinc-500">mayfly <sup>2026-05-18</sup> (<a href="/" class="hover:underline text-blue-600 visited:text-purple-600" wire:navigate>Oliver's Team</a>)</span></div>
+                <div class="flex gap-x-3">
+                    <a href="{{ route('entries.index') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>entries</a>
+                    <a href="{{ route('archived-entries') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>archive</a>
+                    <a href="{{ route('entries.create') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>new entry</a>
+                    <a href="{{ route('teams.show') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>team</a>
+                    <a href="{{ route('account.show') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>account</a>
                 </div>
-                <flux:sidebar.collapse class="shrink-0 in-data-flux-sidebar-collapsed-desktop:bg-zinc-50 dark:in-data-flux-sidebar-collapsed-desktop:bg-zinc-900" inset="right" />
-            </flux:sidebar.header>
-
-            <div class="-mx-4">
-                <flux:separator />
-            </div>
-
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="inbox" :href="route('entries.index')" :current="request()->routeIs('entries.*')" :accent="false" wire:navigate tooltip="Entries">
-                    Entries
-                </flux:sidebar.item>
-                <flux:sidebar.item icon="clock" :href="route('archived-entries')" :current="request()->routeIs('archived-entries')" :accent="false" wire:navigate tooltip="Archive">
-                    Archive
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
-
-            <flux:sidebar.spacer />
-
-            <div class="-mx-4 in-data-flux-sidebar-collapsed-desktop:hidden max-lg:hidden">
-                <flux:separator />
-            </div>
-
-            <flux:dropdown class="max-lg:hidden">
-                <button class="relative flex min-w-0 items-center gap-3 rounded-lg w-full px-2 py-2 text-start text-zinc-950 dark:text-white hover:text-zinc-950 dark:hover:text-white dark:hover:bg-white/5 hover:bg-zinc-950/5 in-data-flux-sidebar-collapsed-desktop:justify-center in-data-flux-sidebar-collapsed-desktop:w-10 in-data-flux-sidebar-collapsed-desktop:px-0">
-                    <div class="relative flex-none isolate flex items-center justify-center size-10 rounded-lg after:absolute after:inset-0 after:inset-ring-[1px] after:inset-ring-black/7 dark:after:inset-ring-white/10 after:rounded-lg overflow-hidden in-data-flux-sidebar-collapsed-desktop:size-7 in-data-flux-sidebar-collapsed-desktop:rounded-md">
-                        <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(Auth::user()->email))) }}?d=404"
-                             alt="{{ Auth::user()->name }}"
-                             class="rounded-lg size-full object-cover"
-                             onerror="this.onerror=null;this.src='https://avatars.laravel.cloud/{{ Auth::user()->email }}'" />
-                    </div>
-                    <span class="min-w-0 flex-1 in-data-flux-sidebar-collapsed-desktop:hidden">
-                        <span class="block truncate text-sm/5 font-medium text-zinc-950 dark:text-white">{{ Auth::user()->name }}</span>
-                        <span class="block truncate text-xs/5 font-normal text-zinc-500 dark:text-zinc-400">{{ Auth::user()->email }}</span>
-                    </span>
-                    <flux:icon icon="chevron-up" variant="micro" class="size-5 sm:size-4 text-zinc-500 dark:text-zinc-400 in-data-flux-sidebar-collapsed-desktop:hidden" />
-                </button>
-
-                @include('partials.account-menu')
-            </flux:dropdown>
-        </flux:sidebar>
-
-        <flux:header class="lg:hidden">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
-
-            <flux:spacer />
-
-            <flux:dropdown position="bottom end" class="-mr-1.5">
-                <button class="p-1.5 rounded-md hover:bg-zinc-950/5 dark:hover:bg-white/5">
-                    <div class="relative flex-none isolate flex items-center justify-center size-6 rounded-md after:absolute after:inset-0 after:inset-ring-[1px] after:inset-ring-black/7 dark:after:inset-ring-white/10 after:rounded-md overflow-hidden">
-                        <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(Auth::user()->email))) }}?d=404"
-                             alt="{{ Auth::user()->name }}"
-                             class="rounded-md size-full object-cover"
-                             onerror="this.onerror=null;this.src='https://avatars.laravel.cloud/{{ Auth::user()->email }}'" />
-                    </div>
-                </button>
-
-                @include('partials.account-menu')
-            </flux:dropdown>
-        </flux:header>
+                <div aria-hidden="true" class="-ml-4 flex-1"></div>
+                <div>
+                    <span class="text-base/6 sm:text-sm/6">logged in as oli@fastmail.com <span class="text-zinc-500">[</span><button class="text-blue-600 active:bg-yellow-100">logout</button><span class="text-zinc-500">]</span></span>
+                </div>
+            </nav>
+        </header>
 
         <flux:main container>
             {{ $slot }}
