@@ -14,7 +14,7 @@
                     <a href="{{ route('teams.show') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>team</a>
                     <a href="{{ route('account.show') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>account</a>
                 </div>
-                <div aria-hidden="true" class="-ml-4 flex-1"></div>
+                <div aria-hidden="true" class="-ml-4 flex-1 max-sm:hidden"></div>
                 <div>
                     <span class="text-base/6 sm:text-sm/6">logged in as oli@fastmail.com <span class="text-zinc-500">[</span><button class="text-blue-600 active:bg-yellow-100">logout</button><span class="text-zinc-500">]</span></span>
                 </div>
