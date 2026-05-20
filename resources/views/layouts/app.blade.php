@@ -7,7 +7,7 @@
         <header class="px-6 lg:px-10 [grid-area:header] max-w-6xl mx-auto w-full">
             <nav class="flex flex-wrap items-center gap-x-4 py-6 lg:py-10 gap-y-2 border-b border-zinc-950/5 dark:border-white/10">
                 <div><span class="text-base/6 sm:text-sm/6 text-zinc-500">mayfly <sup>2026-05-18</sup> (<a href="/" class="hover:underline text-blue-600 visited:text-purple-600" wire:navigate>Oliver's Team</a>)</span></div>
-                <div class="flex gap-x-3">
+                <div class="flex flex-wrap gap-x-3">
                     <a href="{{ route('entries.index') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>entries</a>
                     <a href="{{ route('archived-entries') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>archive</a>
                     <a href="{{ route('entries.create') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>new entry</a>
