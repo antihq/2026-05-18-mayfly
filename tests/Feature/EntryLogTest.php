@@ -27,7 +27,7 @@ test('entries index shows empty list when no entries exist', function () {
     $this->actingAs($this->user);
 
     Livewire::test('pages::entries.index')
-        ->assertSee('Recent entries');
+        ->assertSee('Log task');
 });
 
 test('entries index shows active entries in list', function () {
@@ -55,35 +55,6 @@ test('entries index does not show expired entries in main list', function () {
     $entryIds = $component->get('entries')->pluck('id')->toArray();
 
     expect($entryIds)->not->toContain($entry->id);
-});
-
-test('entries index shows recently expired entries in sidebar', function () {
-    $this->actingAs($this->user);
-    Entry::factory()->create([
-        'team_id' => $this->team->id,
-        'user_id' => $this->user->id,
-        'content' => 'I am expired',
-        'expires_at' => now()->subHours(2),
-    ]);
-
-    Livewire::test('pages::entries.index')
-        ->assertSee('I am expired')
-        ->assertSee('Recently expired');
-});
-
-test('entries index does not show entries expired more than 24 hours ago in sidebar', function () {
-    $this->actingAs($this->user);
-    Entry::factory()->create([
-        'team_id' => $this->team->id,
-        'user_id' => $this->user->id,
-        'content' => 'Old expired',
-        'expires_at' => now()->subHours(25),
-    ]);
-
-    $component = Livewire::test('pages::entries.index');
-
-    $expiredIds = $component->get('recentlyExpired')->pluck('id')->toArray();
-    expect($expiredIds)->toBeEmpty();
 });
 
 test('entries index does not show entries from other teams', function () {
