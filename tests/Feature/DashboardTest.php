@@ -10,7 +10,7 @@ test('guests are redirected to the login page', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('authenticated users are redirected from dashboard to entries index', function () {
+test('authenticated users can visit the dashboard', function () {
     $user = User::factory()->create();
     $team = $user->currentTeam;
 
@@ -18,5 +18,5 @@ test('authenticated users are redirected from dashboard to entries index', funct
         ->actingAs($user)
         ->get(route('dashboard'));
 
-    $response->assertRedirect(route('entries.index'));
+    $response->assertOk();
 });

@@ -3,27 +3,47 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-900 antialiased text-zinc-950 dark:text-white">
-        <header class="px-6 lg:px-10 [grid-area:header] max-w-6xl mx-auto w-full">
-            <nav class="flex flex-wrap items-center gap-x-4 py-6 lg:py-10 gap-y-2 border-b border-zinc-950/5 dark:border-white/10">
-                <div><span class="text-base/6 sm:text-sm/6 text-zinc-500">mayfly <sup>2026-05-18</sup> (<a href="/" class="hover:underline text-blue-600 visited:text-purple-600" wire:navigate>Oliver's Team</a>)</span></div>
-                <div class="flex flex-wrap gap-x-3">
-                    <a href="{{ route('entries.index') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>entries</a>
-                    <a href="{{ route('archived-entries') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>archive</a>
-                    <a href="{{ route('entries.create') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>new entry</a>
-                    <a href="{{ route('teams.show') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>team</a>
-                    <a href="{{ route('account.show') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-600 visited:text-purple-600" wire:navigate>account</a>
+    <body class="bg-white dark:bg-zinc-900 antialiased text-zinc-950 dark:text-white text-base/6 sm:text-sm/6">
+        <header>
+            <nav class="flex items-end flex-wrap py-5">
+                <div class="lg:w-64 lg:justify-end px-4 flex gap-x-3 flex-wrap">
+                    <a href="{{ route('dashboard') }}" class="text-zinc-500 dark:text-zinc-400" wire:navigate>
+                        {{ Str::of(config('app.name'))->explode('-', 4)->last() }}
+                        <sup>{{ Str::of(config('app.name'))->explode('-', 4)->take(3)->join('-') }}</sup>
+                    </a>
+                    <a href="{{ route('dashboard') }}" class="text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400 hover:underline" wire:navigate>{{ Auth::user()->currentTeam->name }}</a>
+                    <a href="{{ route('teams.switch') }}" class="text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400 hover:underline" wire:navigate>switch team</a>
                 </div>
-                <div aria-hidden="true" class="-ml-4 flex-1 max-sm:hidden"></div>
-                <div>
-                    <span class="text-base/6 sm:text-sm/6">logged in as oli@fastmail.com <span class="text-zinc-500">[</span><button class="text-blue-600 active:bg-yellow-100">logout</button><span class="text-zinc-500">]</span></span>
+
+                <div class="flex-1 flex-wrap flex px-4">
+                    <div class="flex gap-x-3">
+                        <a href="{{ route('dashboard') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400 lowercase" wire:navigate>dashboard</a>
+                        <a href="{{ route('entries.index') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400 lowercase" wire:navigate>entries</a>
+                        <a href="{{ route('entries.create') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400 lowercase" wire:navigate>new entry</a>
+                        <a href="{{ route('archived-entries') }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400 lowercase" wire:navigate>archive</a>
+                        <a href="{{ route('teams.settings', Auth::user()->currentTeam->slug) }}" class="text-base/6 sm:text-sm/6 hover:underline text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400 lowercase" wire:navigate>settings</a>
+                    </div>
+
+                    <div aria-hidden="true" class="flex-1"></div>
+
+                    <div class="flex gap-x-1.5">
+                        logged in as <a href="{{ route('settings') }}" class="hover:underline text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400 lowercase" wire:navigate>{{ Auth::user()->email }}</a>
+                        <form method="POST" action="{{ route('logout') }}" class="inline-flex">
+                            @csrf
+                            <flux:badge as="button" type="submit" class="lowercase">logout</flux:badge>
+                        </form>
+                    </div>
                 </div>
             </nav>
         </header>
 
-        <flux:main container>
-            {{ $slot }}
-        </flux:main>
+        <main class="lg:pl-64">
+            <div class="p-4 pt-0">
+                <div class="w-full max-w-6xl">
+                    {{ $slot }}
+                </div>
+            </div>
+        </main>
 
         @persist('toast')
             <flux:toast.group position="bottom center">

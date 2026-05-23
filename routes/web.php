@@ -8,7 +8,7 @@ Route::view('/', 'pages::home')->name('home')->middleware('guest');
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function () {
-        Route::get('/dashboard', fn () => redirect()->route('entries.index', ['current_team' => request()->route('current_team')]))->name('dashboard');
+        Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
         Route::livewire('/entries', 'pages::entries.index')->name('entries.index');
         Route::livewire('/entries/create', 'pages::entries.create')->name('entries.create');
         Route::livewire('/entries/{entry}', 'pages::entries.show')->name('entries.show');

@@ -17,10 +17,10 @@ test('entries index page renders for authenticated users', function () {
         ->assertOk();
 });
 
-test('dashboard redirects to entries index', function () {
+test('authenticated users can visit the dashboard', function () {
     $this->actingAs($this->user)
         ->get(route('dashboard'))
-        ->assertRedirect(route('entries.index'));
+        ->assertOk();
 });
 
 test('entries index shows empty list when no entries exist', function () {
