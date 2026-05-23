@@ -2,25 +2,25 @@
 
 namespace App\Models;
 
-use App\Enums\EntryStatus;
-use App\Enums\EntryType;
-use Database\Factories\EntryFactory;
+use App\Enums\BulletStatus;
+use App\Enums\BulletType;
+use Database\Factories\BulletFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['team_id', 'user_id', 'type', 'content', 'status', 'expires_at'])]
-class Entry extends Model
+#[Fillable(['team_id', 'user_id', 'type', 'body', 'status', 'expires_at'])]
+class Bullet extends Model
 {
-    /** @use HasFactory<EntryFactory> */
+    /** @use HasFactory<BulletFactory> */
     use HasFactory;
 
     protected function casts(): array
     {
         return [
-            'type' => EntryType::class,
-            'status' => EntryStatus::class,
+            'type' => BulletType::class,
+            'status' => BulletStatus::class,
             'expires_at' => 'datetime',
         ];
     }

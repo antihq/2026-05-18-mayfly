@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\EntryType;
-use App\Models\Entry;
+use App\Enums\BulletType;
+use App\Models\Bullet;
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -9,63 +9,63 @@ use Livewire\Component;
 
 new class extends Component
 {
-    public Entry $entryModel;
+    public Bullet $bulletModel;
 
-    public string $content = '';
+    public string $body = '';
 
     public string $type = 'task';
 
-    public function mount(Entry $entry): void
+    public function mount(Bullet $bullet): void
     {
-        if ($entry->team_id !== Auth::user()->currentTeam->id) {
+        if ($bullet->team_id !== Auth::user()->currentTeam->id) {
             abort(403);
         }
 
-        $this->entryModel = $entry;
-        $this->content = $entry->content;
-        $this->type = $entry->type->value;
+        $this->bulletModel = $bullet;
+        $this->body = $bullet->body;
+        $this->type = $bullet->type->value;
     }
 
     public function update(): void
     {
         $validated = $this->validate([
-            'content' => 'required|string|max:1000',
-            'type' => ['required', 'string', Rule::in(EntryType::cases())],
+            'body' => 'required|string|max:1000',
+            'type' => ['required', 'string', Rule::in(BulletType::cases())],
         ]);
 
-        $this->entryModel->update([
-            'content' => $validated['content'],
+        $this->bulletModel->update([
+            'body' => $validated['body'],
             'type' => $validated['type'],
         ]);
 
-        Flux::toast(variant: 'success', text: 'Entry updated.');
+        Flux::toast(variant: 'success', text: 'Bullet updated.');
 
-        $this->redirectRoute('entries.index', navigate: true);
+        $this->redirectRoute('bullets.index', navigate: true);
     }
 
     public function delete(): void
     {
-        $this->entryModel->delete();
+        $this->bulletModel->delete();
 
-        Flux::toast(variant: 'success', text: 'Entry deleted.');
+        Flux::toast(variant: 'success', text: 'Bullet deleted.');
 
-        $this->redirectRoute('entries.index', navigate: true);
+        $this->redirectRoute('bullets.index', navigate: true);
     }
 
     public function render()
     {
-        return $this->view()->title('Edit — ' . Str::limit($this->entryModel->content, 30));
+        return $this->view()->title('Edit — ' . Str::limit($this->bulletModel->body, 30));
     }
 }; ?>
 
 <section class="w-full">
-    <flux:heading size="xl" level="1">Edit entry</flux:heading>
+    <flux:heading size="xl" level="1">Edit bullet</flux:heading>
 
     <form wire:submit="update" class="mt-6 space-y-6 max-w-xl">
         <flux:field>
-            <flux:label>Content</flux:label>
-            <flux:input wire:model="content" required autofocus data-test="entry-content-input" />
-            <flux:error name="content" />
+            <flux:label>What's on your mind?</flux:label>
+            <flux:input wire:model="body" required autofocus data-test="bullet-body-input" />
+            <flux:error name="body" />
         </flux:field>
 
         <flux:field>
@@ -79,7 +79,7 @@ new class extends Component
 
         <div class="flex">
             <flux:spacer />
-            <flux:button variant="primary" type="submit" class="max-sm:w-full" data-test="create-entry-submit">
+            <flux:button variant="primary" type="submit" class="max-sm:w-full" data-test="create-bullet-submit">
                 Save
             </flux:button>
         </div>
@@ -93,10 +93,10 @@ new class extends Component
             <flux:button
                 class="text-red-700! dark:text-red-300! max-sm:w-full"
                 wire:click="delete"
-                wire:confirm="Are you sure you want to delete this entry?"
-                data-test="entry-delete-button"
+                wire:confirm="Are you sure you want to delete this bullet?"
+                data-test="bullet-delete-button"
             >
-                Delete entry
+                Delete bullet
             </flux:button>
         </div>
     </div>

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum EntryType: string
+enum BulletType: string
 {
     case Task = 'task';
     case Note = 'note';

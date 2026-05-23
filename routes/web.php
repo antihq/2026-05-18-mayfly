@@ -9,11 +9,10 @@ Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function () {
         Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
-        Route::livewire('/entries', 'pages::entries.index')->name('entries.index');
-        Route::livewire('/entries/create', 'pages::entries.create')->name('entries.create');
-        Route::livewire('/entries/{entry}', 'pages::entries.show')->name('entries.show');
-        Route::livewire('/entries/{entry}/edit', 'pages::entries.edit')->name('entries.edit');
-        Route::livewire('/archived-entries', 'pages::archive.show')->name('archived-entries');
+        Route::livewire('/bullets', 'pages::bullets.index')->name('bullets.index');
+        Route::livewire('/bullets/create', 'pages::bullets.create')->name('bullets.create');
+        Route::livewire('/bullets/{bullet}', 'pages::bullets.show')->name('bullets.show');
+        Route::livewire('/bullets/{bullet}/edit', 'pages::bullets.edit')->name('bullets.edit');
     });
 
 Route::middleware(['auth'])->group(function () {

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum EntryStatus: string
+enum BulletStatus: string
 {
     case Active = 'active';
     case Completed = 'completed';
