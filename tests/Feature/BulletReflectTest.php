@@ -1,9 +1,9 @@
 <?php
 
 use App\Enums\BulletStatus;
-use App\Enums\BulletType;
 use App\Models\Bullet;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -193,7 +193,7 @@ test('acting on bullet from another team throws not found on reflect page', func
 
     Livewire::test('pages::bullets.reflect')
         ->call('remove', $bullet->id);
-})->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+})->throws(ModelNotFoundException::class);
 
 test('completing completed then migrated task preserves checkbox state', function () {
     $this->actingAs($this->user);

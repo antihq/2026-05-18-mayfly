@@ -8,7 +8,7 @@ Route::view('/', 'pages::home')->name('home')->middleware('guest');
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function () {
-        Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
+        Route::redirect('/dashboard', '/{current_team}/bullets')->name('dashboard');
         Route::livewire('/bullets', 'pages::bullets.index')->name('bullets.index');
         Route::livewire('/reflect', 'pages::bullets.reflect')->name('reflect');
     });

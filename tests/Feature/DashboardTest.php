@@ -10,7 +10,7 @@ test('guests are redirected to the login page', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('authenticated users can visit the dashboard', function () {
+test('dashboard redirects to bullets index', function () {
     $user = User::factory()->create();
     $team = $user->currentTeam;
 
@@ -18,5 +18,5 @@ test('authenticated users can visit the dashboard', function () {
         ->actingAs($user)
         ->get(route('dashboard'));
 
-    $response->assertOk();
+    $response->assertRedirect(route('bullets.index'));
 });

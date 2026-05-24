@@ -4,6 +4,7 @@ use App\Enums\BulletStatus;
 use App\Enums\BulletType;
 use App\Models\Bullet;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -17,10 +18,10 @@ test('bullets index page renders for authenticated users', function () {
         ->assertOk();
 });
 
-test('authenticated users can visit the dashboard', function () {
+test('dashboard redirects to bullets index', function () {
     $this->actingAs($this->user)
         ->get(route('dashboard'))
-        ->assertOk();
+        ->assertRedirect(route('bullets.index'));
 });
 
 test('bullets index shows empty list when no bullets exist', function () {
@@ -170,6 +171,4 @@ test('completing bullet from another team throws not found on index page', funct
 
     Livewire::test('pages::bullets.index')
         ->call('complete', $bullet->id);
-})->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-
-
+})->throws(ModelNotFoundException::class);
