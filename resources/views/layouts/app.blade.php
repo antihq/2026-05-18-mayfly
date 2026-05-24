@@ -7,7 +7,7 @@
         <header>
             <nav class="flex items-end flex-wrap py-5">
                 <div class="lg:w-64 lg:justify-end px-4 flex gap-x-3 flex-wrap">
-                    <a href="{{ route('dashboard') }}" class="text-zinc-500 dark:text-zinc-400" wire:navigate>
+                    <a href="{{ route('home') }}" class="text-zinc-500 dark:text-zinc-400" wire:navigate>
                         {{ Str::of(config('app.name'))->explode('-', 4)->last() }}
                         <sup>{{ Str::of(config('app.name'))->explode('-', 4)->take(3)->join('-') }}</sup>
                     </a>
