@@ -2,7 +2,7 @@
     <div class="grid lg:grid-cols-[1fr_320px] gap-x-12 lg:gap-x-16 gap-y-8">
         <div>
             <div class="space-y-4 max-w-prose">
-                <p>mayfly is a rapid logging tool inspired by the <a href="https://bulletjournal.com" class="hover:underline text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400">bullet journal</a> technique. It's for capturing tasks and notes when you don't have your notebook with you, or when it's easier to just use your phone — walking, commuting, whenever something crosses your mind. Write it down, free your mind, move on.</p>
+                <p>mayfly is a rapid logging tool inspired by the <a href="https://bulletjournal.com" class="underline decoration-current/50 hover:decoration-current text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400">bullet journal</a> technique. It's for capturing tasks and notes when you don't have your notebook with you, or when it's easier to just use your phone — walking, commuting, whenever something crosses your mind. Write it down, free your mind, move on.</p>
 
                 <p>You log entries called bullets. A bullet can be a task (something you intend to do) or a note (something you want to capture). Type it, pick the type, and move on. No categories, no tags, no projects. Just log it.</p>
 
