@@ -1,11 +1,15 @@
 <x-layouts::auth title="Welcome">
     <div class="grid lg:grid-cols-[1fr_320px] gap-x-12 lg:gap-x-16 gap-y-8">
         <div>
-            <flux:heading level="1">Anti Starter Kit</flux:heading>
+            <div class="space-y-4 max-w-prose">
+                <p>mayfly is a rapid logging tool inspired by the <a href="https://bulletjournal.com" class="hover:underline text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400">bullet journal</a> technique. It's for capturing tasks and notes when you don't have your notebook with you, or when it's easier to just use your phone — walking, commuting, whenever something crosses your mind. Write it down, free your mind, move on.</p>
 
-            <p class="mt-1 max-w-prose">
-                An opinionated starter kit made for the <a href="https://github.com/antihq" class="hover:underline text-blue-700 visited:text-purple-700 dark:text-blue-400 dark:visited:text-purple-400">AntiHQ Laravel projects</a>. It ships with authentication, teams, and a set of conventions to get you building faster.
-            </p>
+                <p>You log entries called bullets. A bullet can be a task (something you intend to do) or a note (something you want to capture). Type it, pick the type, and move on. No categories, no tags, no projects. Just log it.</p>
+
+                <p>When you have time, review your bullets and act on them: complete a task, migrate it to your notebook or another system, drop it if it's no longer relevant, or remove it entirely. The reflect view shows only active bullets that haven't been resolved.</p>
+
+                <p>Every bullet expires 72 hours after creation. After that it's permanently deleted — no archive, no trash, no recovery. This is by design. Most things that feel important in the moment lose relevance within a few days. If you haven't acted on something in three days — completed it, migrated it, or even just reflected on it — it probably wasn't worth keeping. The 72-hour window is enough time to decide what matters.</p>
+            </div>
         </div>
 
         @guest
