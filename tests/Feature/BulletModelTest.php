@@ -85,6 +85,12 @@ test('expires_at is cast to datetime', function () {
     expect($bullet->expires_at)->toBeInstanceOf(CarbonInterface::class);
 });
 
+test('completed_at is cast to datetime', function () {
+    $bullet = Bullet::factory()->create(['completed_at' => now()]);
+
+    expect($bullet->completed_at)->toBeInstanceOf(CarbonInterface::class);
+});
+
 test('status defaults to active', function () {
     $bullet = Bullet::factory()->create();
 

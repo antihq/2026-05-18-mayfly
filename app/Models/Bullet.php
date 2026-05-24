@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['team_id', 'user_id', 'type', 'body', 'status', 'expires_at'])]
+#[Fillable(['team_id', 'user_id', 'type', 'body', 'status', 'expires_at', 'completed_at'])]
 class Bullet extends Model
 {
     /** @use HasFactory<BulletFactory> */
@@ -22,6 +22,7 @@ class Bullet extends Model
             'type' => BulletType::class,
             'status' => BulletStatus::class,
             'expires_at' => 'datetime',
+            'completed_at' => 'datetime',
         ];
     }
 

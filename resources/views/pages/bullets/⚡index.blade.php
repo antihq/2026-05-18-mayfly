@@ -48,25 +48,7 @@ new #[Title('Bullets')] class extends Component
     {
         $bullet = $this->findTeamBullet($bulletId);
 
-        $bullet->update(['status' => BulletStatus::Completed]);
-
-        unset($this->bullets);
-    }
-
-    public function cancel(int $bulletId): void
-    {
-        $bullet = $this->findTeamBullet($bulletId);
-
-        $bullet->update(['status' => BulletStatus::Cancelled]);
-
-        unset($this->bullets);
-    }
-
-    public function migrate(int $bulletId): void
-    {
-        $bullet = $this->findTeamBullet($bulletId);
-
-        $bullet->update(['status' => BulletStatus::Migrated]);
+        $bullet->update(['status' => BulletStatus::Completed, 'completed_at' => now()]);
 
         unset($this->bullets);
     }
@@ -98,41 +80,52 @@ new #[Title('Bullets')] class extends Component
             <li :key="$bullet->id" data-test="bullet-row">
                 <div class="py-2">
                     <div class="flex justify-between gap-x-6">
-                        <div class="flex min-w-0 gap-x-3">
+                        <div class="flex min-w-0 gap-x-1.5">
                             @if ($bullet->status === BulletStatus::Migrated)
                                 <div class="h-6 flex items-center">
-                                    <flux:icon.chevron-right variant="micro" class="inline text-zinc-500 dark:text-zinc-400" />
+                                    <flux:icon.chevron-right variant="micro" @class([
+                                        'inline',
+                                        'text-zinc-500 dark:text-zinc-400',
+                                        'opacity-50',
+                                    ]) />
                                 </div>
                             @endif
 
                             @if ($bullet->type === BulletType::Task)
                                 <flux:checkbox
-                                    :checked="$bullet->status === BulletStatus::Completed"
-                                    :disabled="$bullet->status === BulletStatus::Completed || $bullet->status === BulletStatus::Cancelled || $bullet->status === BulletStatus::Migrated"
+                                    :checked="filled($bullet->completed_at)"
+                                    :disabled="filled($bullet->completed_at) || $bullet->status === BulletStatus::Cancelled || $bullet->status === BulletStatus::Migrated"
                                     wire:click="complete({{ $bullet->id }})"
                                     data-test="task-checkbox"
                                 />
+                            @else
+                                <div class="h-6 flex items-center">
+                                    <flux:icon.minus variant="micro" @class([
+                                        'inline',
+                                        'text-zinc-500 dark:text-zinc-400',
+                                        'opacity-50' => $bullet->status === BulletStatus::Migrated,
+                                    ]) />
+                                </div>
                             @endif
 
                             <div class="min-w-0 flex-auto">
-                                <p class="text-base/6 sm:text-sm/6 font-medium {{ $bullet->status === BulletStatus::Cancelled ? 'line-through text-zinc-500 dark:text-zinc-400' : ($bullet->status === BulletStatus::Migrated ? 'text-zinc-500 dark:text-zinc-400' : '') }}">{{ $bullet->body }}</p>
+                                <p @class([
+                                    'text-base/6 sm:text-sm/6',
+                                    'font-medium',
+                                    'line-through text-zinc-500 dark:text-zinc-400' => $bullet->status === BulletStatus::Cancelled,
+                                    'text-zinc-500 dark:text-zinc-400' => $bullet->status === BulletStatus::Migrated,
+                                ])>{{ $bullet->body }}</p>
                             </div>
                         </div>
 
-                        <span class="shrink-0 text-sm/5 sm:text-xs/5 text-zinc-500 dark:text-zinc-400">
+                        <span @class([
+                            'shrink-0',
+                            'text-zinc-500 dark:text-zinc-400' => $bullet->status === BulletStatus::Cancelled || $bullet->status === BulletStatus::Migrated,
+                        ])>
                             {{ $bullet->timeRemaining() }}
                         </span>
                     </div>
 
-                    <div class="mt-1 flex justify-start gap-x-3 text-sm/5 sm:text-xs/5 text-zinc-500 dark:text-zinc-400">
-                        @if ($bullet->type === BulletType::Task && $bullet->status === BulletStatus::Active)
-                            <button wire:click="cancel({{ $bullet->id }})" data-test="cancel-button" class="text-zinc-500 dark:text-zinc-400 active:bg-yellow-100 lowercase">Cancel</button>
-                        @endif
-
-                        @if ($bullet->status !== BulletStatus::Migrated && $bullet->status !== BulletStatus::Cancelled)
-                            <button wire:click="migrate({{ $bullet->id }})" data-test="migrate-button" class="text-zinc-500 dark:text-zinc-400 active:bg-yellow-100 lowercase">Migrate</button>
-                        @endif
-                    </div>
                 </div>
             </li>
         @endforeach

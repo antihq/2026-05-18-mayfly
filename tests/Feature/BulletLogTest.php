@@ -103,34 +103,10 @@ test('task can be completed from index page', function () {
     Livewire::test('pages::bullets.index')
         ->call('complete', $bullet->id);
 
-    expect($bullet->fresh()->status)->toEqual(BulletStatus::Completed);
-});
+    $bullet = $bullet->fresh();
 
-test('task can be cancelled from index page', function () {
-    $this->actingAs($this->user);
-    $bullet = Bullet::factory()->create([
-        'team_id' => $this->team->id,
-        'user_id' => $this->user->id,
-        'type' => BulletType::Task,
-    ]);
-
-    Livewire::test('pages::bullets.index')
-        ->call('cancel', $bullet->id);
-
-    expect($bullet->fresh()->status)->toEqual(BulletStatus::Cancelled);
-});
-
-test('bullet can be migrated from index page', function () {
-    $this->actingAs($this->user);
-    $bullet = Bullet::factory()->create([
-        'team_id' => $this->team->id,
-        'user_id' => $this->user->id,
-    ]);
-
-    Livewire::test('pages::bullets.index')
-        ->call('migrate', $bullet->id);
-
-    expect($bullet->fresh()->status)->toEqual(BulletStatus::Migrated);
+    expect($bullet->status)->toEqual(BulletStatus::Completed)
+        ->and($bullet->completed_at)->not->toBeNull();
 });
 
 test('inline bullet can be created as task from index page', function () {
@@ -194,32 +170,6 @@ test('completing bullet from another team throws not found on index page', funct
 
     Livewire::test('pages::bullets.index')
         ->call('complete', $bullet->id);
-})->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-
-test('cancelling bullet from another team throws not found on index page', function () {
-    $otherUser = User::factory()->create();
-    $bullet = Bullet::factory()->create([
-        'team_id' => $otherUser->currentTeam->id,
-        'user_id' => $otherUser->id,
-    ]);
-
-    $this->actingAs($this->user);
-
-    Livewire::test('pages::bullets.index')
-        ->call('cancel', $bullet->id);
-})->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-
-test('migrating bullet from another team throws not found on index page', function () {
-    $otherUser = User::factory()->create();
-    $bullet = Bullet::factory()->create([
-        'team_id' => $otherUser->currentTeam->id,
-        'user_id' => $otherUser->id,
-    ]);
-
-    $this->actingAs($this->user);
-
-    Livewire::test('pages::bullets.index')
-        ->call('migrate', $bullet->id);
 })->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
 

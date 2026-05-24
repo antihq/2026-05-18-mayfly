@@ -10,6 +10,7 @@ Route::prefix('{current_team}')
     ->group(function () {
         Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
         Route::livewire('/bullets', 'pages::bullets.index')->name('bullets.index');
+        Route::livewire('/reflect', 'pages::bullets.reflect')->name('reflect');
     });
 
 Route::middleware(['auth'])->group(function () {

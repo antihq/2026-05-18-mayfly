@@ -44,6 +44,7 @@ class BulletFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => BulletStatus::Completed,
+            'completed_at' => now(),
         ]);
     }
 
