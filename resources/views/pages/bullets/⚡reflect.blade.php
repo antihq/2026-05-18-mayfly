@@ -74,7 +74,7 @@ new #[Title('Reflect')] class extends Component
 
     <ul role="list" class="divide-y divide-zinc-950/5 dark:divide-white/5">
         @foreach ($this->bullets as $bullet)
-            <li :key="$bullet->id">
+            <li wire:key="{{ $bullet->id }}">
                 <div class="py-2">
                     <div class="flex justify-between gap-x-6">
                         <div class="flex min-w-0 gap-x-1.5">

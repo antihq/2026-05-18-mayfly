@@ -77,7 +77,7 @@ new #[Title('Bullets')] class extends Component
 
     <ul role="list" class="mt-6 divide-y divide-zinc-950/5 dark:divide-white/5">
         @foreach ($this->bullets as $bullet)
-            <li :key="$bullet->id" data-test="bullet-row">
+            <li wire:key="{{ $bullet->id }}" data-test="bullet-row">
                 <div class="py-2">
                     <div class="flex justify-between gap-x-6">
                         <div class="flex min-w-0 gap-x-1.5">
